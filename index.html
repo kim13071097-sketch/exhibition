@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIR INFORMATION SPACE | TEAM F</title>
+<style>
+:root{
+  --bg:#050708; --panel:#101419; --line:rgba(255,255,255,.16);
+  --text:#f5f5f5; --muted:#909aa3; --yellow:#f2dc35; --green:#67d36d; --mint:#78fff2;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,"Noto Sans KR",sans-serif;overflow-x:hidden}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:36px 36px;opacity:.35}
+.hero{min-height:100vh;position:relative;overflow:hidden;background:#000}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.04) 0%,rgba(0,0,0,.08) 42%,rgba(0,0,0,.95) 100%),linear-gradient(90deg,rgba(0,0,0,.72) 0%,rgba(0,0,0,.08) 48%,rgba(0,0,0,.68) 100%),url("images/img_1.png") center/cover no-repeat;filter:contrast(1.04) saturate(.96)}
+.hero-content{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 28px}
+.meta{position:absolute;top:34px;left:42px;right:42px;display:flex;justify-content:space-between;color:rgba(255,255,255,.76);font-size:12px;letter-spacing:.22em}
+.hero h1{margin:0;font-size:clamp(44px,7vw,112px);line-height:.92;letter-spacing:.055em;font-weight:900;text-shadow:0 12px 42px rgba(0,0,0,.8)}
+.hero .sub{margin-top:24px;color:var(--yellow);letter-spacing:.42em;font-size:clamp(16px,2vw,30px)}
+.hero .kr{margin-top:22px;color:rgba(255,255,255,.92);font-size:clamp(16px,1.7vw,23px)}
+.scroll{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);color:var(--yellow);font-size:11px;letter-spacing:.16em;text-decoration:none}
+.scroll:before{content:"";display:block;width:18px;height:30px;border:2px solid var(--yellow);border-radius:20px;margin:0 auto 10px}
+
+.destination{padding:42px 28px 18px;background:#07090b}
+.board{max-width:1520px;margin:0 auto;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.01)),#07090b;border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:28px 34px 34px;box-shadow:0 28px 90px rgba(0,0,0,.55)}
+.board-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid rgba(242,220,53,.45);margin-bottom:16px}
+.board-title{color:var(--yellow);font-size:32px;font-weight:900;letter-spacing:.08em}
+.clock{color:#e7e7e7;font-size:18px;letter-spacing:.08em}
+.table-head,.flight{display:grid;grid-template-columns:165px 1fr 145px 115px 170px;gap:10px;align-items:center}
+.table-head{padding:0 18px 8px;color:#8a9199;font-size:12px;letter-spacing:.14em}
+.flight{min-height:72px;margin-top:8px;padding:0 18px;border:1px solid rgba(255,255,255,.075);background:repeating-linear-gradient(90deg,rgba(255,255,255,.036) 0 12px,rgba(255,255,255,.012) 12px 24px),#111315;cursor:pointer;transition:.22s}
+.flight:hover{transform:translateX(7px);border-color:rgba(242,220,53,.75);box-shadow:0 0 36px rgba(242,220,53,.09)}
+.code{color:var(--yellow);font-family:"Courier New",monospace;font-size:30px;letter-spacing:.11em}
+.destination-name{font-size:30px;letter-spacing:.23em;font-weight:800}
+.status{color:var(--green);font-weight:800;letter-spacing:.1em}
+.gate{font-size:24px}
+.boarding{color:var(--yellow);font-weight:900;letter-spacing:.1em;display:flex;justify-content:space-between;align-items:center}
+.arrow{font-size:34px}
+
+.routes{padding:18px 28px 70px;background:linear-gradient(to bottom,#07090b,#0a0d10)}
+.route{max-width:1520px;margin:0 auto 32px;padding:34px;display:none;border:1px solid rgba(255,255,255,.13);border-radius:26px;background:radial-gradient(circle at 50% 0%,rgba(242,220,53,.08),transparent 42%),linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),#151a1f;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+.route.active{display:block}
+.route-title{display:flex;justify-content:center;align-items:center;gap:18px;margin-bottom:34px;font-weight:900;letter-spacing:.15em;font-size:30px}
+.route-title span{color:var(--yellow);font-size:15px}
+
+.window-grid{display:grid;grid-template-columns:repeat(3, minmax(260px, 1fr));gap:34px;justify-items:center}
+.window-grid.showcase{grid-template-columns:repeat(3, minmax(260px, 1fr))}
+.window{position:relative;width:100%;max-width:330px;height:370px;border-radius:48% 48% 44% 44% / 34% 34% 46% 46%;border:16px solid #afa796;background:radial-gradient(circle at 50% 18%,rgba(255,255,255,.22),transparent 22%),linear-gradient(to bottom,rgba(255,255,255,.16),rgba(0,0,0,.8)),#151719;overflow:hidden;cursor:pointer;box-shadow:inset 0 0 0 3px rgba(0,0,0,.45),inset 0 18px 22px rgba(255,255,255,.14),0 18px 36px rgba(0,0,0,.55);transition:.25s}
+.window:before{content:"";position:absolute;inset:24px;border-radius:48% 48% 44% 44% / 34% 34% 46% 46%;background:linear-gradient(to bottom,rgba(0,0,0,.18),rgba(0,0,0,.72)),url("images/img_2.png") center/cover no-repeat;opacity:.25}
+.window:hover{transform:translateY(-8px);border-color:#ded6c2;box-shadow:0 0 42px rgba(242,220,53,.18)}
+.window-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:38px}
+.icon{color:var(--yellow);font-size:54px;margin-bottom:24px}
+.window b{font-size:22px;line-height:1.25;letter-spacing:.04em;white-space:normal;word-break:keep-all;text-shadow:0 4px 12px rgba(0,0,0,.7)}
+.window small{position:absolute;bottom:30px;color:rgba(255,255,255,.72);font-size:13px;letter-spacing:.12em}
+
+.crew-database{background:#050505;border-color:rgba(120,255,242,.22);position:relative;overflow:hidden}
+.crew-head{position:relative;z-index:2;display:grid;grid-template-columns:1fr 310px;gap:28px;border-bottom:1px solid rgba(255,255,255,.18);padding-bottom:28px;margin-bottom:28px}
+.crew-kicker{color:var(--mint);letter-spacing:.32em;font-size:13px;font-weight:900;margin-bottom:14px}
+.crew-head h2{margin:0;font-size:clamp(54px,8vw,118px);line-height:.82;letter-spacing:-.06em}
+.meta-box{border:1px solid rgba(255,255,255,.2);padding:18px;background:rgba(255,255,255,.03)}
+.meta-row{display:flex;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.12);padding:10px 0;font-size:13px;letter-spacing:.09em}
+.meta-row span{color:var(--muted)}
+.crew-list{position:relative;z-index:2;display:grid;gap:16px}
+.crew-card{position:relative;display:grid;grid-template-columns:110px 160px 1fr 135px;gap:24px;align-items:center;min-height:190px;border:1px solid rgba(255,255,255,.2);background:linear-gradient(90deg,rgba(120,255,242,.055),transparent 30%),rgba(10,10,10,.86);padding:22px;overflow:hidden}
+.crew-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--mint)}
+.crew-id{font-size:34px;font-weight:900;color:var(--mint);font-family:"Courier New",monospace;letter-spacing:.06em}
+.portrait{width:145px;height:145px;border:1px solid rgba(255,255,255,.23);background:white;overflow:hidden}
+.portrait img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+.crew-info span,.active small,.crew-data small{display:block;color:var(--muted);font-size:11px;letter-spacing:.18em;margin-bottom:7px}
+.crew-info h3{font-size:38px;margin:0 0 14px;letter-spacing:-.04em}
+.crew-data{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.crew-data div{border-top:1px solid rgba(255,255,255,.16);padding-top:8px}
+.crew-data b,.active b{font-size:15px;letter-spacing:.05em}
+.active{justify-self:end;text-align:right}
+.active b{color:var(--mint)}
+.notice{max-width:1520px;margin:0 auto;text-align:center;color:#747d84;font-size:13px;letter-spacing:.1em}
+footer{padding:24px 20px 48px;text-align:center;color:#6f767d;background:#0a0d10;font-size:12px;letter-spacing:.15em}
+@media(max-width:1100px){
+  .table-head{display:none} .flight{grid-template-columns:1fr;gap:8px;padding:18px}
+  .window-grid,.window-grid.showcase{grid-template-columns:repeat(2, minmax(260px,1fr))}
+  .crew-head,.crew-card{grid-template-columns:1fr} .active{justify-self:start;text-align:left}
+}
+@media(max-width:680px){
+  .meta{display:none} .board-title{font-size:23px} .destination-name{font-size:21px;letter-spacing:.1em}
+  .window-grid,.window-grid.showcase{grid-template-columns:1fr}
+  .window{height:340px}
+}
+
+.problem-section{
+  display:none;
+  max-width:1520px;
+  margin:0 auto 32px;
+  padding:46px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(242,220,53,.08),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),
+    #101418;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+}
+.problem-section.active{display:block}
+.problem-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+  border-bottom:1px solid rgba(255,255,255,.16);
+  padding-bottom:24px;
+  margin-bottom:34px;
+}
+.problem-header .num{
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-size:36px;
+  letter-spacing:.12em;
+}
+.problem-header h2{
+  margin:0;
+  font-size:clamp(46px,6vw,92px);
+  line-height:.88;
+  letter-spacing:-.04em;
+}
+.problem-close{
+  border:1px solid rgba(242,220,53,.55);
+  color:var(--yellow);
+  background:transparent;
+  padding:12px 18px;
+  border-radius:999px;
+  cursor:pointer;
+  letter-spacing:.12em;
+  font-weight:800;
+}
+.problem-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:34px;
+  align-items:start;
+}
+.problem-photo-main{
+  position:relative;
+  min-height:720px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:22px;
+  overflow:hidden;
+  background:url("images/img_3.jpg") center/cover no-repeat;
+}
+.problem-photo-main:after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom,rgba(0,0,0,.1),rgba(0,0,0,.7));
+}
+.callout{
+  position:absolute;
+  z-index:2;
+  max-width:320px;
+  border:1px solid rgba(242,220,53,.75);
+  color:white;
+  background:rgba(0,0,0,.68);
+  padding:14px 16px;
+  backdrop-filter:blur(8px);
+}
+.callout b{
+  display:block;
+  color:var(--yellow);
+  font-size:13px;
+  letter-spacing:.14em;
+  margin-bottom:6px;
+}
+.callout span{
+  font-size:15px;
+  line-height:1.45;
+}
+.c1{left:28px;top:38px}
+.c2{right:32px;top:240px}
+.c3{left:34px;bottom:42px}
+.problem-cards{
+  display:grid;
+  gap:18px;
+}
+.problem-card{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.035);
+  border-radius:20px;
+  overflow:hidden;
+}
+.problem-card img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  display:block;
+  filter:saturate(.9) contrast(1.05);
+}
+.problem-card-text{
+  padding:22px;
+}
+.problem-card-text .index{
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-size:22px;
+  margin-bottom:8px;
+}
+.problem-card-text h3{
+  margin:0 0 12px;
+  font-size:28px;
+  letter-spacing:-.03em;
+}
+.problem-card-text p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.7;
+  font-size:17px;
+}
+.next-note{
+  margin-top:30px;
+  border-top:1px solid rgba(255,255,255,.14);
+  padding-top:24px;
+  display:flex;
+  justify-content:space-between;
+  color:var(--yellow);
+  letter-spacing:.12em;
+  font-weight:900;
+}
+@media(max-width:1000px){
+  .problem-layout{grid-template-columns:1fr}
+  .problem-photo-main{min-height:520px}
+}
+
+
+/* FIX: Korean text should not break letter-by-letter */
+*{
+  word-break: keep-all;
+  overflow-wrap: normal;
+}
+.problem-card-text,
+.problem-card-text p,
+.callout,
+.callout span,
+.window b,
+.crew-info,
+.destination-name{
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+  white-space: normal !important;
+}
+.problem-card-text p{
+  max-width: 100%;
+  line-height: 1.65;
+}
+.problem-card-text{
+  min-width: 0;
+}
+.problem-cards{
+  min-width: 0;
+}
+.problem-card{
+  min-width: 0;
+}
+.callout{
+  width: min(360px, calc(100% - 56px));
+}
+.window b{
+  letter-spacing: .03em !important;
+}
+
+
+/* IDEA / FINAL SKETCH SECTIONS */
+.sketch-section{
+  display:none;
+  max-width:1520px;
+  margin:0 auto 32px;
+  padding:46px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(242,220,53,.08),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),
+    #101418;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+}
+.sketch-section.active{display:block}
+.sketch-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+  border-bottom:1px solid rgba(255,255,255,.16);
+  padding-bottom:24px;
+  margin-bottom:34px;
+}
+.sketch-header .num{
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-size:36px;
+  letter-spacing:.12em;
+}
+.sketch-header h2{
+  margin:0;
+  font-size:clamp(46px,6vw,92px);
+  line-height:.88;
+  letter-spacing:-.04em;
+}
+.sketch-close{
+  border:1px solid rgba(242,220,53,.55);
+  color:var(--yellow);
+  background:transparent;
+  padding:12px 18px;
+  border-radius:999px;
+  cursor:pointer;
+  letter-spacing:.12em;
+  font-weight:800;
+}
+.sketch-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.sketch-card{
+  position:relative;
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.035);
+  border-radius:18px;
+  overflow:hidden;
+  min-height:300px;
+}
+.sketch-card img{
+  width:100%;
+  height:100%;
+  min-height:300px;
+  max-height:420px;
+  object-fit:cover;
+  display:block;
+}
+.sketch-index{
+  position:absolute;
+  top:14px;
+  left:14px;
+  z-index:2;
+  padding:7px 10px;
+  background:rgba(0,0,0,.72);
+  border:1px solid rgba(242,220,53,.5);
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-weight:900;
+}
+.sketch-category{
+  margin:34px 0 18px;
+  color:var(--yellow);
+  font-weight:900;
+  letter-spacing:.18em;
+  font-size:15px;
+  border-top:1px solid rgba(255,255,255,.16);
+  padding-top:24px;
+}
+.final-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+}
+.final-card{
+  position:relative;
+  border:1px solid rgba(242,220,53,.28);
+  background:rgba(255,255,255,.035);
+  border-radius:20px;
+  overflow:hidden;
+}
+.final-card h3{
+  margin:0;
+  padding:22px 24px;
+  color:var(--yellow);
+  letter-spacing:.12em;
+  font-size:18px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+}
+.final-card img{
+  width:100%;
+  display:block;
+  max-height:760px;
+  object-fit:contain;
+  background:#111;
+}
+@media(max-width:1000px){
+  .sketch-grid{grid-template-columns:1fr 1fr}
+  .final-grid{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .sketch-grid{grid-template-columns:1fr}
+}
+
+
+/* MODELING SECTION */
+.modeling-section{
+  display:none;
+  max-width:1520px;
+  margin:0 auto 32px;
+  padding:46px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(242,220,53,.08),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),
+    #101418;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+}
+.modeling-section.active{display:block}
+.model-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+  border-bottom:1px solid rgba(255,255,255,.16);
+  padding-bottom:24px;
+  margin-bottom:34px;
+}
+.model-header .num{
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-size:36px;
+  letter-spacing:.12em;
+}
+.model-header h2{
+  margin:0;
+  font-size:clamp(46px,6vw,92px);
+  line-height:.88;
+  letter-spacing:-.04em;
+}
+.model-close{
+  border:1px solid rgba(242,220,53,.55);
+  color:var(--yellow);
+  background:transparent;
+  padding:12px 18px;
+  border-radius:999px;
+  cursor:pointer;
+  letter-spacing:.12em;
+  font-weight:800;
+}
+.model-hero{
+  display:grid;
+  grid-template-columns:.85fr 1.15fr;
+  gap:28px;
+  align-items:center;
+  margin-bottom:34px;
+}
+.model-text-panel{
+  border:1px solid rgba(255,255,255,.16);
+  background:rgba(255,255,255,.035);
+  border-radius:20px;
+  padding:28px;
+}
+.model-text-panel h3{
+  color:var(--yellow);
+  margin:0 0 18px;
+  font-size:30px;
+  letter-spacing:.08em;
+}
+.model-points{
+  display:grid;
+  gap:12px;
+  margin-top:20px;
+}
+.model-points div{
+  border-top:1px solid rgba(255,255,255,.14);
+  padding-top:12px;
+  color:#eee;
+  font-size:17px;
+  word-break:keep-all;
+}
+.model-hero img,
+.model-grid img,
+.model-wide img{
+  width:100%;
+  display:block;
+  background:#111;
+  border:1px solid rgba(255,255,255,.16);
+}
+.model-hero img{
+  border-radius:20px;
+  max-height:660px;
+  object-fit:contain;
+}
+.model-category{
+  margin:34px 0 18px;
+  color:var(--yellow);
+  font-weight:900;
+  letter-spacing:.18em;
+  font-size:15px;
+  border-top:1px solid rgba(255,255,255,.16);
+  padding-top:24px;
+}
+.model-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.model-grid img{
+  border-radius:16px;
+  height:310px;
+  object-fit:cover;
+}
+.model-wide{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.model-wide img{
+  border-radius:16px;
+  max-height:480px;
+  object-fit:contain;
+}
+@media(max-width:1000px){
+  .model-hero{grid-template-columns:1fr}
+  .model-grid{grid-template-columns:1fr 1fr}
+  .model-wide{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .model-grid{grid-template-columns:1fr}
+}
+
+
+/* RENDERING SECTION */
+.rendering-section{
+  display:none;
+  max-width:1520px;
+  margin:0 auto 32px;
+  padding:46px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(242,220,53,.08),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),
+    #101418;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+}
+.rendering-section.active{display:block}
+.render-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+  border-bottom:1px solid rgba(255,255,255,.16);
+  padding-bottom:24px;
+  margin-bottom:34px;
+}
+.render-header .num{
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-size:36px;
+  letter-spacing:.12em;
+}
+.render-header h2{
+  margin:0;
+  font-size:clamp(46px,6vw,92px);
+  line-height:.88;
+  letter-spacing:-.04em;
+}
+.render-close{
+  border:1px solid rgba(242,220,53,.55);
+  color:var(--yellow);
+  background:transparent;
+  padding:12px 18px;
+  border-radius:999px;
+  cursor:pointer;
+  letter-spacing:.12em;
+  font-weight:800;
+}
+.render-hero{
+  position:relative;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.16);
+  margin-bottom:34px;
+}
+.render-hero img{
+  width:100%;
+  display:block;
+  max-height:760px;
+  object-fit:cover;
+}
+.render-hero-text{
+  position:absolute;
+  left:28px;
+  bottom:28px;
+  padding:18px 22px;
+  background:rgba(0,0,0,.64);
+  border:1px solid rgba(242,220,53,.45);
+  backdrop-filter:blur(8px);
+}
+.render-hero-text b{
+  display:block;
+  color:var(--yellow);
+  letter-spacing:.16em;
+  margin-bottom:8px;
+}
+.render-category{
+  margin:34px 0 18px;
+  color:var(--yellow);
+  font-weight:900;
+  letter-spacing:.18em;
+  font-size:15px;
+  border-top:1px solid rgba(255,255,255,.16);
+  padding-top:24px;
+}
+.render-grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.render-grid2 img,
+.render-wide img,
+.render-detail img{
+  width:100%;
+  display:block;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  background:#111;
+}
+.render-grid2 img{
+  height:380px;
+  object-fit:cover;
+}
+.render-wide img{
+  max-height:620px;
+  object-fit:cover;
+}
+.render-detail img{
+  max-height:620px;
+  object-fit:contain;
+}
+@media(max-width:900px){
+  .render-grid2{grid-template-columns:1fr}
+  .render-grid2 img{height:auto}
+}
+
+
+/* 3D PRINTING SECTION */
+.printing-section{
+  display:none;
+  max-width:1520px;
+  margin:0 auto 32px;
+  padding:46px;
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(242,220,53,.08),transparent 34%),
+    linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.015)),
+    #101418;
+  box-shadow:0 24px 70px rgba(0,0,0,.45);
+}
+.printing-section.active{display:block}
+.print-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:30px;
+  border-bottom:1px solid rgba(255,255,255,.16);
+  padding-bottom:24px;
+  margin-bottom:34px;
+}
+.print-header .num{
+  color:var(--yellow);
+  font-family:"Courier New",monospace;
+  font-size:36px;
+  letter-spacing:.12em;
+}
+.print-header h2{
+  margin:0;
+  font-size:clamp(46px,6vw,92px);
+  line-height:.88;
+  letter-spacing:-.04em;
+}
+.print-close{
+  border:1px solid rgba(242,220,53,.55);
+  color:var(--yellow);
+  background:transparent;
+  padding:12px 18px;
+  border-radius:999px;
+  cursor:pointer;
+  letter-spacing:.12em;
+  font-weight:800;
+}
+.print-hero{
+  position:relative;
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.16);
+  margin-bottom:34px;
+}
+.print-hero img{
+  width:100%;
+  display:block;
+  max-height:760px;
+  object-fit:cover;
+}
+.print-hero-text{
+  position:absolute;
+  left:28px;
+  bottom:28px;
+  padding:18px 22px;
+  background:rgba(0,0,0,.64);
+  border:1px solid rgba(242,220,53,.45);
+  backdrop-filter:blur(8px);
+}
+.print-hero-text b{
+  display:block;
+  color:var(--yellow);
+  letter-spacing:.16em;
+  margin-bottom:8px;
+}
+.print-category{
+  margin:34px 0 18px;
+  color:var(--yellow);
+  font-weight:900;
+  letter-spacing:.18em;
+  font-size:15px;
+  border-top:1px solid rgba(255,255,255,.16);
+  padding-top:24px;
+}
+.print-grid3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+.print-grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+.print-grid3 img,.print-grid2 img,.print-wide img{
+  width:100%;
+  display:block;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  background:#111;
+}
+.print-grid3 img{
+  height:320px;
+  object-fit:cover;
+}
+.print-grid2 img{
+  height:430px;
+  object-fit:cover;
+}
+.print-wide img{
+  max-height:720px;
+  object-fit:cover;
+}
+@media(max-width:1000px){
+  .print-grid3{grid-template-columns:1fr 1fr}
+  .print-grid2{grid-template-columns:1fr}
+}
+@media(max-width:680px){
+  .print-grid3{grid-template-columns:1fr}
+}
+
+
+/* FIX 3D PRINTING IMAGE RATIO: keep original uploaded aspect ratio */
+.printing-section img{
+  height:auto !important;
+  max-height:none !important;
+  object-fit:contain !important;
+}
+.print-grid3,
+.print-grid2{
+  align-items:start;
+}
+.print-grid3 img,
+.print-grid2 img,
+.print-wide img{
+  width:100% !important;
+  height:auto !important;
+  object-fit:contain !important;
+  background:#0b0f14;
+}
+.print-grid3,
+.print-grid2{
+  grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+}
+.print-subgroup{
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:22px;
+  padding:22px;
+  margin-bottom:24px;
+  background:rgba(255,255,255,.035);
+}
+.print-subgroup-title{
+  color:var(--yellow);
+  font-weight:900;
+  letter-spacing:.15em;
+  margin:0 0 18px;
+  font-size:14px;
+}
+@media(max-width:900px){
+  .print-grid3,
+  .print-grid2{
+    grid-template-columns:1fr !important;
+  }
+}
+
+</style>
+</head>
+<body>
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="meta"><span>TEAM F · EXHIBITION DESIGN</span><span>NATIONAL AVIATION MUSEUM</span></div>
+    <h1>AIR INFORMATION SPACE</h1>
+    <div class="sub">PANEL TO FLIGHT</div>
+    <div class="kr">읽는 패널에서 몰입형 공간으로</div>
+    <a href="#destination" class="scroll">SCROLL TO EXPLORE</a>
+  </div>
+</section>
+
+<section class="destination" id="destination">
+  <div class="board">
+    <div class="board-head"><div class="board-title">✈ SELECT DESTINATION</div><div class="clock">◷ 14:25</div></div>
+    <div class="table-head"><div>FLIGHT</div><div>DESTINATION</div><div>STATUS</div><div>GATE</div><div>BOARDING</div></div>
+    <div class="flight" onclick="showRoute('air')"><div class="code">AR-001</div><div class="destination-name">AIR INFORMATION SPACE</div><div class="status">ON TIME</div><div class="gate">A01</div><div class="boarding"><span>BOARDING</span><span class="arrow">→</span></div></div>
+    <div class="flight" onclick="showRoute('showcase')"><div class="code">AR-002</div><div class="destination-name">SHOWCASE REDESIGN</div><div class="status">ON TIME</div><div class="gate">A02</div><div class="boarding"><span>BOARDING</span><span class="arrow">→</span></div></div>
+    <div class="flight" onclick="showRoute('crew')"><div class="code">AR-003</div><div class="destination-name">CREW DATABASE</div><div class="status">ON TIME</div><div class="gate">A03</div><div class="boarding"><span>BOARDING</span><span class="arrow">→</span></div></div>
+  </div>
+</section>
+
+<section class="routes">
+  <div class="route active" id="air">
+    <div class="route-title"><span>AR-001</span> AIR INFORMATION SPACE</div>
+    <div class="window-grid">
+      <div class="window" onclick="showProblem()"><div class="window-content"><div class="icon">△</div><b>PROBLEM</b><small>01</small></div></div>
+      <div class="window" onclick="showSketchSection('idea-detail')"><div class="window-content"><div class="icon">✎</div><b>IDEA SKETCH</b><small>02</small></div></div>
+      <div class="window" onclick="showSketchSection('final-detail')"><div class="window-content"><div class="icon">▤</div><b>FINAL SKETCH</b><small>03</small></div></div>
+      <div class="window" onclick="showDetailSection('modeling-detail')"><div class="window-content"><div class="icon">□</div><b>MODELING</b><small>04</small></div></div>
+      <div class="window" onclick="showRenderingSection()"><div class="window-content"><div class="icon">▧</div><b>RENDERING</b><small>05</small></div></div>
+      <div class="window" onclick="showPrintingSection()"><div class="window-content"><div class="icon">▣</div><b>3D PRINTING</b><small>06</small></div></div>
+    </div>
+  </div>
+
+  <div class="route" id="showcase">
+    <div class="route-title"><span>AR-002</span> SHOWCASE REDESIGN</div>
+    <div class="window-grid showcase">
+      <div class="window"><div class="window-content"><div class="icon">△</div><b>PROBLEM</b><small>01</small></div></div>
+      <div class="window"><div class="window-content"><div class="icon">◌</div><b>CONCEPT</b><small>02</small></div></div>
+      <div class="window"><div class="window-content"><div class="icon">□</div><b>MODELING</b><small>03</small></div></div>
+      <div class="window"><div class="window-content"><div class="icon">▧</div><b>RENDERING</b><small>04</small></div></div>
+      <div class="window"><div class="window-content"><div class="icon">▷</div><b>VIDEO</b><small>05</small></div></div>
+    </div>
+  </div>
+
+  <div class="route crew-database" id="crew">
+    <div class="crew-head">
+      <div><div class="crew-kicker">TEAM F / MEMBER ARCHIVE</div><h2>CREW<br>DATABASE</h2></div>
+      <aside class="meta-box">
+        <div class="meta-row"><span>PROJECT</span><b>AR-003</b></div>
+        <div class="meta-row"><span>TYPE</span><b>MEMBER DATA</b></div>
+        <div class="meta-row"><span>STATUS</span><b>ACTIVE</b></div>
+        <div class="meta-row"><span>TEAM</span><b>F</b></div>
+      </aside>
+    </div>
+    <div class="crew-list">
+<article class="crew-card">
+  <div class="crew-id">F-01</div>
+  <div class="portrait"><img src="images/img_4.png" alt="최민지"></div>
+  <div class="crew-info">
+    <span>NAME</span>
+    <h3>최민지</h3>
+    <div class="crew-data">
+      <div><small>POSITION</small><b>LEADER / PRESENTER</b></div>
+      <div><small>SPECIALTY</small><b>MODELING</b></div>
+    </div>
+  </div>
+  <div class="active"><small>STATUS</small><b>ACTIVE</b></div>
+</article>
+
+
+<article class="crew-card">
+  <div class="crew-id">F-02</div>
+  <div class="portrait"><img src="images/img_5.png" alt="김승지"></div>
+  <div class="crew-info">
+    <span>NAME</span>
+    <h3>김승지</h3>
+    <div class="crew-data">
+      <div><small>POSITION</small><b>GRAPHIC DESIGNER</b></div>
+      <div><small>SPECIALTY</small><b>GRAPHIC DESIGN</b></div>
+    </div>
+  </div>
+  <div class="active"><small>STATUS</small><b>ACTIVE</b></div>
+</article>
+
+
+<article class="crew-card">
+  <div class="crew-id">F-03</div>
+  <div class="portrait"><img src="images/img_6.png" alt="진주빛"></div>
+  <div class="crew-info">
+    <span>NAME</span>
+    <h3>진주빛</h3>
+    <div class="crew-data">
+      <div><small>POSITION</small><b>GRAPHIC DESIGNER</b></div>
+      <div><small>SPECIALTY</small><b>GRAPHIC DESIGN</b></div>
+    </div>
+  </div>
+  <div class="active"><small>STATUS</small><b>ACTIVE</b></div>
+</article>
+
+
+<article class="crew-card">
+  <div class="crew-id">F-04</div>
+  <div class="portrait"><img src="images/img_7.png" alt="우현진"></div>
+  <div class="crew-info">
+    <span>NAME</span>
+    <h3>우현진</h3>
+    <div class="crew-data">
+      <div><small>POSITION</small><b>3D MODELER</b></div>
+      <div><small>SPECIALTY</small><b>MODELING</b></div>
+    </div>
+  </div>
+  <div class="active"><small>STATUS</small><b>ACTIVE</b></div>
+</article>
+
+
+<article class="crew-card">
+  <div class="crew-id">F-05</div>
+  <div class="portrait"><img src="images/img_8.png" alt="김선명"></div>
+  <div class="crew-info">
+    <span>NAME</span>
+    <h3>김선명</h3>
+    <div class="crew-data">
+      <div><small>POSITION</small><b>RESEARCHER</b></div>
+      <div><small>SPECIALTY</small><b>RESEARCH</b></div>
+    </div>
+  </div>
+  <div class="active"><small>STATUS</small><b>ACTIVE</b></div>
+</article>
+</div>
+  </div>
+  
+  <div class="problem-section" id="problem-detail">
+    <div class="problem-header">
+      <div>
+        <div class="num">01</div>
+        <h2>PROBLEM<br>ANALYSIS</h2>
+      </div>
+      <button class="problem-close" onclick="hideProblem()">CLOSE</button>
+    </div>
+
+    <div class="problem-layout">
+      <div class="problem-photo-main">
+        <div class="callout c1"><b>LOW READABILITY</b><span>투명 아크릴 위 작은 회색 텍스트로 인해 정보 식별이 어렵다.</span></div>
+        <div class="callout c2"><b>VISUAL OVERLAP</b><span>패널 뒤 배경과 글씨가 겹쳐 시각적 혼잡이 발생한다.</span></div>
+        <div class="callout c3"><b>FLAT EXPERIENCE</b><span>패널을 읽고 지나가는 평면적인 정보 전달 방식에 머문다.</span></div>
+      </div>
+
+      <div class="problem-cards">
+        <article class="problem-card">
+          <img src="images/img_9.jpg" alt="existing exhibition">
+          <div class="problem-card-text">
+            <div class="index">01</div>
+            <h3>낮은 가독성</h3>
+            <p>투명 아크릴 위 작은 회색 텍스트가 배경 이미지와 겹치면서 정보 식별이 어렵다.</p>
+          </div>
+        </article>
+        <article class="problem-card">
+          <img src="images/img_10.jpg" alt="information panel close view">
+          <div class="problem-card-text">
+            <div class="index">02</div>
+            <h3>평면적 정보 전달</h3>
+            <p>정보를 패널로만 전달하는 구조라 관람객이 내용을 수동적으로 읽고 지나가게 된다.</p>
+          </div>
+        </article>
+        <article class="problem-card">
+          <img src="images/img_11.jpg" alt="front view">
+          <div class="problem-card-text">
+            <div class="index">03</div>
+            <h3>몰입감 부족</h3>
+            <p>항공 전시가 가진 공간감과 체험 요소가 충분히 드러나지 않는다.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="next-note">
+      <span>FROM INFORMATION PANEL</span>
+      <span>TO AIR INFORMATION SPACE →</span>
+    </div>
+  </div>
+
+  
+  <div class="sketch-section" id="idea-detail">
+    <div class="sketch-header">
+      <div>
+        <div class="num">02</div>
+        <h2>IDEA<br>SKETCH</h2>
+      </div>
+      <button class="sketch-close" onclick="hideSketchSection('idea-detail')">CLOSE</button>
+    </div>
+
+    <div class="sketch-category">INITIAL CONCEPTS / FORM EXPLORATION / SPATIAL DEVELOPMENT</div>
+    <div class="sketch-grid">
+      
+        <article class="sketch-card">
+          <div class="sketch-index">01</div>
+          <img src="images/img_12.jpg" alt="Idea sketch 1">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">02</div>
+          <img src="images/img_13.jpg" alt="Idea sketch 2">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">03</div>
+          <img src="images/img_14.jpg" alt="Idea sketch 3">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">04</div>
+          <img src="images/img_15.jpg" alt="Idea sketch 4">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">05</div>
+          <img src="images/img_16.jpg" alt="Idea sketch 5">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">06</div>
+          <img src="images/img_17.jpg" alt="Idea sketch 6">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">07</div>
+          <img src="images/img_18.jpg" alt="Idea sketch 7">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">08</div>
+          <img src="images/img_19.jpg" alt="Idea sketch 8">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">09</div>
+          <img src="images/img_20.jpg" alt="Idea sketch 9">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">10</div>
+          <img src="images/img_21.jpg" alt="Idea sketch 10">
+        </article>
+
+        <article class="sketch-card">
+          <div class="sketch-index">11</div>
+          <img src="images/img_22.jpg" alt="Idea sketch 11">
+        </article>
+    </div>
+  </div>
+
+  <div class="sketch-section" id="final-detail">
+    <div class="sketch-header">
+      <div>
+        <div class="num">03</div>
+        <h2>FINAL<br>SKETCH</h2>
+      </div>
+      <button class="sketch-close" onclick="hideSketchSection('final-detail')">CLOSE</button>
+    </div>
+
+    <div class="final-grid">
+      
+        <article class="final-card">
+          <div class="sketch-index">01</div>
+          <h3>FINAL STRUCTURE</h3>
+          <img src="images/img_23.jpg" alt="Final sketch 1">
+        </article>
+
+        <article class="final-card">
+          <div class="sketch-index">02</div>
+          <h3>FINAL SPATIAL LAYOUT</h3>
+          <img src="images/img_24.jpg" alt="Final sketch 2">
+        </article>
+    </div>
+  </div>
+
+  
+  <div class="modeling-section" id="modeling-detail">
+    <div class="model-header">
+      <div>
+        <div class="num">04</div>
+        <h2>MODELING</h2>
+      </div>
+      <button class="model-close" onclick="hideDetailSection('modeling-detail')">CLOSE</button>
+    </div>
+
+    <div class="model-hero">
+      <div class="model-text-panel">
+        <h3>OVERALL STRUCTURE</h3>
+        <p>정보패널을 항공기 단면 구조로 확장하고, 상부 조종석 영역과 하부 미디어존으로 공간을 분리하였다.</p>
+        <div class="model-points">
+          <div>Upper Floor : Cockpit Zone</div>
+          <div>Lower Floor : Media Zone</div>
+          <div>Transparent Floor Structure</div>
+        </div>
+      </div>
+      <img src="images/img_25.jpg" alt="overall modeling structure">
+    </div>
+
+    <div class="model-category">COCKPIT INTERFACE</div>
+    <div class="model-grid">
+      <img src="images/img_26.jpg" alt="modeling image">
+<img src="images/img_27.jpg" alt="modeling image">
+<img src="images/img_28.jpg" alt="modeling image">
+<img src="images/img_29.jpg" alt="modeling image">
+<img src="images/img_30.jpg" alt="modeling image">
+<img src="images/img_31.jpg" alt="modeling image">
+    </div>
+
+    <div class="model-category">COMPONENT DESIGN</div>
+    <div class="model-wide">
+      <img src="images/img_32.jpg" alt="component modeling">
+<img src="images/img_33.jpg" alt="component modeling">
+<img src="images/img_34.jpg" alt="component modeling">
+<img src="images/img_35.jpg" alt="component modeling">
+    </div>
+  </div>
+
+  
+  <div class="rendering-section" id="rendering-detail">
+    <div class="render-header">
+      <div>
+        <div class="num">05</div>
+        <h2>RENDERING</h2>
+      </div>
+      <button class="render-close" onclick="hideRenderingSection()">CLOSE</button>
+    </div>
+
+    <div class="render-hero">
+      <img src="images/img_36.jpg" alt="rendering hero">
+      <div class="render-hero-text">
+        <b>IMMERSIVE SPACE</b>
+        <span>Cockpit-inspired information experience</span>
+      </div>
+    </div>
+
+    <div class="render-category">MEDIA ZONE</div>
+    <div class="render-wide">
+      <img src="images/img_37.jpg" alt="media zone rendering">
+    </div>
+
+    <div class="render-category">COCKPIT INTERFACE</div>
+    <div class="render-grid2">
+      <img src="images/img_38.jpg" alt="cockpit interface rendering">
+      <img src="images/img_39.jpg" alt="cockpit interface rendering">
+    </div>
+
+    <div class="render-category">FINAL EXHIBITION VIEW</div>
+    <div class="render-grid2">
+      <img src="images/img_40.jpg" alt="final exhibition view">
+      <img src="images/img_41.jpg" alt="final exhibition view">
+    </div>
+
+    <div class="render-category">DETAIL RENDERING</div>
+    <div class="render-detail">
+      <img src="images/img_42.jpg" alt="control panel detail rendering">
+    </div>
+  </div>
+
+  
+  
+  <div class="printing-section" id="printing-detail">
+    <div class="print-header">
+      <div>
+        <div class="num">06</div>
+        <h2>3D<br>PRINTING</h2>
+      </div>
+      <button class="print-close" onclick="hidePrintingSection()">CLOSE</button>
+    </div>
+
+    <div class="print-hero">
+      <img src="images/img_43.jpg" alt="final prototype with light">
+      <div class="print-hero-text">
+        <b>FROM DIGITAL MODEL TO PHYSICAL PROTOTYPE</b>
+        <span>3D printed exhibition model and assembly verification</span>
+      </div>
+    </div>
+
+    <div class="print-category">SPATIAL VERIFICATION</div>
+    <div class="print-subgroup">
+      <div class="print-subgroup-title">ASSEMBLED PROTOTYPE / VISITOR SCALE</div>
+      <div class="print-grid2">
+        <img src="images/img_44.jpg" alt="assembled prototype"><img src="images/img_45.jpg" alt="assembled prototype"><img src="images/img_46.jpg" alt="assembled prototype"><img src="images/img_47.jpg" alt="assembled prototype"><img src="images/img_48.jpg" alt="assembled prototype"><img src="images/img_49.jpg" alt="assembled prototype">
+      </div>
+    </div>
+
+    <div class="print-category">INTERIOR DETAIL</div>
+    <div class="print-subgroup">
+      <div class="print-subgroup-title">UPPER FLOOR / LOWER MEDIA ZONE / TRANSPARENT FLOOR</div>
+      <div class="print-grid2">
+        <img src="images/img_50.jpg" alt="interior detail"><img src="images/img_51.jpg" alt="interior detail"><img src="images/img_52.jpg" alt="interior detail"><img src="images/img_53.jpg" alt="interior detail"><img src="images/img_54.jpg" alt="interior detail">
+      </div>
+    </div>
+
+    <div class="print-category">PRINTED COMPONENTS</div>
+    <div class="print-subgroup">
+      <div class="print-subgroup-title">INDIVIDUAL PRINTED PARTS</div>
+      <div class="print-grid2">
+        <img src="images/img_55.jpg" alt="individual printed part"><img src="images/img_56.jpg" alt="individual printed part"><img src="images/img_57.jpg" alt="individual printed part"><img src="images/img_58.jpg" alt="individual printed part"><img src="images/img_59.jpg" alt="individual printed part">
+      </div>
+    </div>
+
+    <div class="print-category">FINAL PROTOTYPE</div>
+    <div class="print-subgroup">
+      <div class="print-subgroup-title">ASSEMBLED FINAL MODEL</div>
+      <div class="print-grid2">
+        <img src="images/img_60.jpg" alt="final prototype"><img src="images/img_61.jpg" alt="final prototype">
+      </div>
+    </div>
+  </div>
+
+  <p class="notice">항목별 상세 콘텐츠는 이후 하나씩 추가 예정</p>
+</section>
+<footer>© TEAM F · NATIONAL AVIATION MUSEUM · EXHIBITION DESIGN PROJECT</footer>
+<script>
+function showRoute(id){
+  document.querySelectorAll('.route').forEach(route => route.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+}
+function showProblem(){
+  const detail = document.getElementById('problem-detail');
+  detail.classList.add('active');
+  detail.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function hideProblem(){
+  document.getElementById('problem-detail').classList.remove('active');
+}
+
+function showSketchSection(id){
+  document.querySelectorAll('.sketch-section').forEach(sec => sec.classList.remove('active'));
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  target.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function hideSketchSection(id){
+  document.getElementById(id).classList.remove('active');
+}
+
+</script>
+
+<script>
+window.showSketchSection = function(id){
+  document.querySelectorAll('.sketch-section').forEach(function(sec){ sec.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if(target){
+    target.classList.add('active');
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+};
+window.hideSketchSection = function(id){
+  var target = document.getElementById(id);
+  if(target){ target.classList.remove('active'); }
+};
+</script>
+
+
+<script>
+window.showDetailSection = function(id){
+  document.querySelectorAll('.modeling-section').forEach(function(sec){ sec.classList.remove('active'); });
+  var target = document.getElementById(id);
+  if(target){
+    target.classList.add('active');
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+};
+window.hideDetailSection = function(id){
+  var target = document.getElementById(id);
+  if(target){ target.classList.remove('active'); }
+};
+</script>
+
+
+<script>
+window.showRenderingSection = function(){
+  var target = document.getElementById('rendering-detail');
+  if(target){
+    target.classList.add('active');
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+};
+window.hideRenderingSection = function(){
+  var target = document.getElementById('rendering-detail');
+  if(target){ target.classList.remove('active'); }
+};
+</script>
+
+
+<script>
+window.showPrintingSection = function(){
+  var target = document.getElementById('printing-detail');
+  if(target){
+    target.classList.add('active');
+    target.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+};
+window.hidePrintingSection = function(){
+  var target = document.getElementById('printing-detail');
+  if(target){ target.classList.remove('active'); }
+};
+</script>
+
+</body>
+</html>
